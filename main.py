@@ -3,9 +3,10 @@ import os
 import discord
 from discord.ext.commands import Bot
 from keepAlive import keep_alive
-import functions as f
+
 from PIL import Image, ImageFont, ImageDraw
 from io import BytesIO
+import functions as f
 
 #on startup
 keep_alive()
@@ -32,30 +33,31 @@ async def avatar(ctx, a):
   user = user[0]
   await ctx.send(user.avatar_url)
 
+
 @client.command()
 async def addclass(ctx, a, b, c):
   if f.check_if_legit_name(name=a.upper()):
-    print("BREAKPOINT")
-    print(str(a) + "_")
-    print(b)
-    print(c)
-    print(ctx.author.name)
-    print(ctx.author.id)
-    print(f.return_master_list())
     something = f.add_classes_to_profile(user_id=ctx.author.id, user_name=ctx.author.name, classname=a, classnum=b, classsec=c, master_user_list=f.return_master_list())
+    f.update_master_list(something)
+    await ctx.send("Class added!")
   else:
     await ctx.send("Uh oh! Check your class name for errors because that didn't work or the class doesnt exist!")
+    return
   print(something)
-  f.update_master_list(something)
+  
 
 @client.command()
 async def removeclass(ctx, a, b, c):
   if f.check_if_legit_name(name=a.upper()):
     something = f.remove_classes_from_profile(user_id=ctx.author.id, user_name=ctx.author.name, classname=a, classnum=b, classsec=c, master_user_list=f.return_master_list())
   else:
-    await ctx.send("Uh oh! Check your class name for errors because that didn't work or the class doesnt exist!")
+    await ctx.send("Uh oh! The class name you just entered is not listed within your currently enrolled courses! Please type !profile to see your classes")
   print(something)
-  f.update_master_list(something)
+  f.update_master_list(something)  
+
+@client.command()
+async def getUser(ctx, a=None):
+  await ctx.send(f.getUser(ctx, a))
 
 @client.command()
 async def checkclass(ctx, a):
@@ -66,7 +68,6 @@ async def checkclass(ctx, a):
 
 @client.command()
 async def profile(ctx, a=None):
-
   if a == None:
     user = ctx.author
   else:
@@ -75,6 +76,8 @@ async def profile(ctx, a=None):
 	    a = a.replace(character, "")
     user = await ctx.guild.query_members(user_ids=[int(a)])
     user = user[0]
+
+  
 
   img = Image.open("honeycomb.jpg")
   draw = ImageDraw.Draw(img)
@@ -92,6 +95,7 @@ async def profile(ctx, a=None):
 
   #card formatting
   name = user.name #text is username
+    
   classN = "Classes:"
 
 
@@ -100,11 +104,20 @@ async def profile(ctx, a=None):
   topclassadj = 225
   vertclassmult = 160
   description = "Description: "
+  
+  
+
   draw.text((leftclassadj, 50), name, (0,0,0), font=fnt2)
   draw.text((leftclassadj, 125), "______________________", (0,0,0), font=fnt)
 
-  #for i in 
-  draw.text((leftclassadj, topclassadj), classN, (0,0,0), font=fnt)
+  userMatrix = f.getUser(ctx, a)
+  print(userMatrix)
+  for i in range(0,len(userMatrix),2):
+    draw.text((leftclassadj, topclassadj+vertclassmult*i/2), userMatrix[i], (0,0,0), font=fnt)
+    if i+1 in range(len(userMatrix)):
+      draw.text((rightclassadj, topclassadj+vertclassmult*i/2), userMatrix[i+1], (0,0,0), font=fnt)
+    
+    
   
   #draw.text((leftclassadj, topclassadj+vertclassmult*2), class5, (0,0,0), font=fnt)
   #draw.text((rightclassadj, topclassadj+vertclassmult*2), class6, (0,0,0), font=fnt)
@@ -112,5 +125,7 @@ async def profile(ctx, a=None):
   img.save('sample-out.jpg')
   await ctx.send(file=discord.File('sample-out.jpg'))
 
-
+@client.command()
+async def infGet(ctx, a):
+  await ctx.send(f.getUser(a))
 client.run(my_secret)

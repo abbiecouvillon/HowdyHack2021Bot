@@ -1,46 +1,55 @@
 '''Adding unique classes to a user's profile--Input: (int user_id, string user_name, string classname, string classnum, string classsec, list master_user_list--Returns updated master_user_list'''
+
+import re
+
+import math as m
+
 def add_classes_to_profile(user_id, user_name, classname, classnum, classsec, master_user_list):
-  what_adding_to_list = classname.upper() + " " + str(classnum) + " " + str(classsec) #makes the class into a string
-  print(what_adding_to_list)
-  
+  #makes the class into a string
+  what_adding_to_list = classname.upper() + " " + str(classnum) + " " + str(classsec) 
   id_list = []
+  temp_list = []
   for i in master_user_list: #gets all the unique id's from the master list
-    id_list.append(i[0])
-
+    id_list.append(i[0]) #appending just the id's from each list
+  foundID = False
+  
+  #print(i in master_user_list)
   for i in master_user_list:
-    
-    temp_list = []
-    print(i[0])
-    print(user_id)
-    print(bool(i[0]) == bool(user_id))
-    if i[0] == user_id: #if user is the current name on the list
-      if (what_adding_to_list not in i):
-        i.append(what_adding_to_list)
-      
-      if (user_name != i[1]): #replacing username if they have changed it since last adding classes
-        i.pop(1)
-        i.insert(1, user_name)
-      
+    if i[0] == "": #ignores blank lines
+      return
+    else:
+      if (int(i[0])) == (int(user_id)): #if user is the current name on the list
+        foundID = True
+        if (what_adding_to_list not in i): #checking if class is already in the list
+          i.append(what_adding_to_list)
+        
+        if (user_name != i[1]): #replacing username if they have changed it since last adding classes
+          i.pop(1)
+          i.insert(1, user_name)
 
-    elif user_id not in id_list:
-      temp_list.append(user_id)
-      temp_list.append(user_name)
-      temp_list.append(what_adding_to_list)
-      master_user_list.append(temp_list)
-      id_list.append(user_id) #adds the user_id of the user we just created a profile for to keep it from being created again
+      
+  if foundID == False: #would not run if there is a same ID
+    temp_list.append(user_id)
+    temp_list.append(user_name)
+    temp_list.append(what_adding_to_list)
+    master_user_list.append(temp_list)
+    id_list.append(user_id) #adds the user_id of the user we just created a profile for to keep it from being created again
   return master_user_list
 
 '''Removing unique classes from a user's profile--Input: (int user_id, String user_name, String classname, String/int classnum, String/int classsec, list master_user_list-- Returns updated master_user_list -- also updates the user's profile name if they have changed it since last call of the function'''
 def remove_classes_from_profile(user_id, user_name, classname, classnum, classsec, master_user_list):
   what_removing_from_list = classname.upper() + " " + str(classnum) + " " + str(classsec)
   for i in master_user_list:
-    if i[0] == user_id:
-      if (what_removing_from_list in i):
-        i.remove(what_removing_from_list)
+    if i[0] == "":
+      return
+    else:
+      if (int(i[0]) == int(user_id)): #needs to be int so the number can actually be compared
+        if (what_removing_from_list in i):
+          i.remove(what_removing_from_list)
     
-    if (user_name != i[1]): #replacing username if they have changed it since last adding/removing classes
-        i.pop(1)
-        i.insert(1, user_name)
+      if (user_name != i[1]): #replacing username if they have changed it since last adding/removing classes
+          i.pop(1)
+          i.insert(1, user_name)
   return master_user_list
 
 '''Checking if class name is legitimate, Input: Class Name (String)'''
@@ -439,13 +448,14 @@ def check_if_legit_class(name, number):
 
 '''Updates the master list text file (used whenever the master list is updated) -- Input: (list master_list) --- Output: None'''
 def update_master_list(master_list):
+  print("master_list input: ", master_list, "//end here")
   master_list_text_file = open("MasterList.txt", "w")
   for i in master_list:
     for j in i:
       if i.index(j) != (len(i)-1):
-        master_list_text_file.write(str(j) + ",")
+        master_list_text_file.write(str(j) + ",") #if not at the end, add comma
       else:
-        master_list_text_file.write(str(j) + "\n")
+        master_list_text_file.write(str(j) + "\n") #if at the end of the line, add newline
         
         
 
@@ -456,11 +466,150 @@ def return_master_list():
   
 
   for row in master_list.readlines():
-    row = row.rstrip()
-    temp = row.split(',')
-    master_list_return.append(temp)
+    temp = []
+    row = row.rstrip() #strips out \n from the end of each row
+    temp = row.split(',') #splits each value in the row into a list
+    master_list_return.append(temp) #adds the temporary list to master list
   master_list.close()
   return(master_list_return)
   
 
-    
+def groupAdd(usercode, classCode):
+  # class removes the specified class sorted by abbreviation and number
+
+
+#  Matrix of student information
+  currentInfo = getUser(usercode)
+  if len(currentInfo) <= 10:
+
+    return 0
+
+#  Removes a class from the user file
+def groupRemove(usercode, groupAbbr,groupNum):
+  # class removes the specified class sorted by abbreviation and number
+  return 0
+
+  
+
+#  Makes a matrix for the given 16 dig user code that contains all from the specific file line
+def getUser(ctx, a):
+  # iterates through the main UserInfo.txt file and transforms
+  # the user number into an easily accessible matrix
+  # the matrix is sorted
+  # [Usercode, Description, Class1, Class2, ClassN, ...]
+  # Finds the user by 
+  master_user_list=return_master_list()
+  if a == None:
+    usercode = ctx.author.id
+  else:
+    disallowed_characters = "<!@>"
+    for character in disallowed_characters:
+	    a = a.replace(character, "")
+    #user = await ctx.guild.query_members(user_ids=[int(a)])
+    usercode = a
+  
+  startingvalue = 2
+  users_classes = []
+  for y in master_user_list:
+    if int(y[0]) == int(usercode):
+      for x in range(len(y)-2):
+        users_classes.append(y[startingvalue+x])
+  return users_classes
+
+
+  #  Opens userID and Masterlist for reading and writing
+
+  #  UserID is the only variable that matters of all those dupes
+  
+
+#
+  #return userInfoMatr
+
+#  Binary searching method
+def binSearch(userList, usercode):
+  #  csv = comma seperated (no newlines) variable, for example UserList
+
+  #  Binary search
+  #  
+  #  userIndex stores the index value of where the user ID lies numerically in comparison to the others
+
+  userID = readCSV("UserList.txt")
+  
+  usercode = int(usercode)
+  midway = int((len(userID))/2)
+  indice = midway
+  opCount = 2
+
+
+  #  Binary search algorithm
+
+  for binsearch in range(m.floor(m.log(len(userID))/m.log(2))):
+    if int(usercode) < int(userID[midway]):
+      midway-=m.floor(len(userID)/(2**opCount))  
+
+    elif usercode > int(userID[midway]):
+      midway+=m.floor(len(userID)/(2**opCount))
+
+
+    opCount += 1
+    indice = midway
+  return indice
+
+#  Creates a nested loop of the entire MasterList.txt and iterates through in order to find students with same class or section
+
+'''def comparinator(filename):
+  fileScrambled = open(str(filename),'r')
+  fileRead = fileScrambled.readlines()
+  fileSorted =  fileRead.seperate('\n')
+  fileDoubleSort = fileSorted.seperate(',')
+  fileScrambled.close()'''
+
+# -------------------------READ AND WRITE FUNCTIONS-----------------------------
+
+#  Basically for just reading the Master List, sorts exclusively by row, can fetch specific lines
+def readNLSV(fetch=False):
+
+  fileScrambled = open("UserList.txt",'r')
+  fileSorted = fileScrambled.readlines()
+  
+  fileScrambled.close()
+  if bool(fetch) == False:
+    return fileSorted
+  else:
+    fileSplit = fileSorted[fetch]
+    fileOut = fileSplit #.split(',')
+    return fileOut
+#  Reads UserList.txt, dont input anything with new lines
+def readCSV(filename):
+  fileScrambled = open(filename,'r')
+  fileRead = fileScrambled.readline()
+  fileOut= fileRead.split(',')
+
+  fileScrambled.close()
+  return fileOut
+
+
+#  For inserting a matrix into Master List (Or other New Line Seperated Variables)
+def rebuildNLSV(filename, newline, indice):
+# newline is the matrix to be inserted, indice is the row to be inserted
+  fileScrambled = open("UserList.txt",'r')
+  fileSorted = fileScrambled.readlines()
+  fileSorted[indice].split(',')
+  fileScrambled.close()
+  return 0
+
+#  For inserting a usercode into the UserList.txt file
+def rebuildCSV(usercode, indice):
+  fileScrambled = open("UserList.txt",'r')
+  fileRead = fileScrambled.readlines()
+  fileScrambled.close()
+
+  fileWrite = open(str("UserList.txt"),'w')
+  fileRead.insert(indice, usercode)
+  for i in range(len(fileRead)):
+    fileWrite.write(str(fileRead))
+    if i != len(fileRead):
+      fileWrite.write(",")
+
+
+  return 0
