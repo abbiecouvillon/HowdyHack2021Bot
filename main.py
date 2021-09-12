@@ -92,7 +92,7 @@ async def profile(ctx, a=None):
   
 
   #card formatting
-  name = user #text is username
+  name = "user" #text is username
   classN = "Classes:"
 
 
