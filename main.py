@@ -35,6 +35,13 @@ async def avatar(ctx, a):
 @client.command()
 async def addclass(ctx, a, b, c):
   if f.check_if_legit_name(name=a.upper()):
+    print("BREAKPOINT")
+    print(str(a) + "_")
+    print(b)
+    print(c)
+    print(ctx.author.name)
+    print(ctx.author.id)
+    print(f.return_master_list())
     something = f.add_classes_to_profile(user_id=ctx.author.id, user_name=ctx.author.name, classname=a, classnum=b, classsec=c, master_user_list=f.return_master_list())
   else:
     await ctx.send("Uh oh! Check your class name for errors because that didn't work or the class doesnt exist!")

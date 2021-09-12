@@ -10,6 +10,9 @@ def add_classes_to_profile(user_id, user_name, classname, classnum, classsec, ma
   for i in master_user_list:
     
     temp_list = []
+    print(i[0])
+    print(user_id)
+    print(bool(i[0]) == bool(user_id))
     if i[0] == user_id: #if user is the current name on the list
       if (what_adding_to_list not in i):
         i.append(what_adding_to_list)
@@ -440,7 +443,7 @@ def update_master_list(master_list):
   for i in master_list:
     for j in i:
       if i.index(j) != (len(i)-1):
-        master_list_text_file.write(j + ", ")
+        master_list_text_file.write(str(j) + ",")
       else:
         master_list_text_file.write(str(j) + "\n")
         
