@@ -434,4 +434,30 @@ def check_if_legit_class(name, number):
     return False
 
 
+'''Updates the master list text file (used whenever the master list is updated) -- Input: (list master_list) --- Output: None'''
+def update_master_list(master_list):
+  master_list_text_file = open("MasterList.txt", "w")
+  for i in master_list:
+    for j in i:
+      if i.index(j) != (len(i)-1):
+        master_list_text_file.write(j + ", ")
+      else:
+        master_list_text_file.write(str(j) + "\n")
+        
+        
+
+'''Returns the master list in a form the computer can read after formatting it from the text file Input --- (None) Output --- Master List in a computer readable form'''
+def return_master_list():
+  master_list = open("MasterList.txt", "r")
+  master_list_return = []
+  
+
+  for row in master_list.readlines():
+    row = row.rstrip()
+    temp = row.split(',')
+    master_list_return.append(temp)
+  master_list.close()
+  return(master_list_return)
+  
+
     

@@ -22,15 +22,6 @@ async def on_ready():
 async def ping(ctx):
     await ctx.reply("pong!")
 
-#join class
-@client.command()
-async def joinclass(ctx, classcode, classnum, classsec):
-    guild = ctx.guild
-    #makes role
-    name = classcode.upper() + " " + classnum + " " + classsec
-    if discord.utils.get(guild.channels, name= name) == False:
-      await guild.create_role(name= name)
-
 @client.command()
 async def avatar(ctx, a):
   print(a)
@@ -42,20 +33,22 @@ async def avatar(ctx, a):
   await ctx.send(user.avatar_url)
 
 @client.command()
-async def addclass(ctx, a, b, c): #ADD IF STATEMENT TO CHECK IF CLASS IS LEGIT
-  f.add_classes_to_profile(user_id=ctx.author.id, user_name=ctx.author.name, classname=a, classnum=b, classsec=c, master_user_list='userInfo.txt')
-  try:
-    await ctx.send(a.upper(), " was added successfully!")
-  except:
-    await ctx.send("Oops! That failed!")
+async def addclass(ctx, a, b, c):
+  if f.check_if_legit_name(name=a.upper()):
+    something = f.add_classes_to_profile(user_id=ctx.author.id, user_name=ctx.author.name, classname=a, classnum=b, classsec=c, master_user_list=f.return_master_list())
+  else:
+    await ctx.send("Uh oh! Check your class name for errors because that didn't work or the class doesnt exist!")
+  print(something)
+  f.update_master_list(something)
 
 @client.command()
 async def removeclass(ctx, a, b, c):
-  try:
-    f.remove_classes_from_profile(user_id=ctx.author.id, user_name=ctx.author.name, classname=a.upper(), classnum=b, classsec=c, master_user_list='userInfo.txt')
-    await ctx.send(a.upper(), " was removed successfully!")
-  except:
-    await ctx.send("Oops! That failed!")
+  if f.check_if_legit_name(name=a.upper()):
+    something = f.remove_classes_from_profile(user_id=ctx.author.id, user_name=ctx.author.name, classname=a, classnum=b, classsec=c, master_user_list=f.return_master_list())
+  else:
+    await ctx.send("Uh oh! Check your class name for errors because that didn't work or the class doesnt exist!")
+  print(something)
+  f.update_master_list(something)
 
 @client.command()
 async def checkclass(ctx, a):
@@ -76,7 +69,6 @@ async def profile(ctx, a=None):
     user = await ctx.guild.query_members(user_ids=[int(a)])
     user = user[0]
 
-  print(ctx.author)
   img = Image.open("honeycomb.jpg")
   draw = ImageDraw.Draw(img)
   fnt = ImageFont.truetype("Pillow/Tests/fonts/FreeMono.ttf", 75)
@@ -92,7 +84,7 @@ async def profile(ctx, a=None):
   
 
   #card formatting
-  name = "user" #text is username
+  name = user.name #text is username
   classN = "Classes:"
 
 
