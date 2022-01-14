@@ -1,3 +1,3 @@
 # HowdyHack2021Bot
 
-the token used for running the bot in the last line of main.py should be replaced with your own bot id. for terms of service reasons, i cannot give you my own bot id.
+The token used for running the bot in the last line of main.py should be replaced with your own bot ID. For terms of service reasons, we cannot give you our own bot id.
